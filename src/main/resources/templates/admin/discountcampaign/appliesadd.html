@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout/head :: head}"></head>
+<body class="hold-transition skin-blue sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <div th:replace="~{admin/layout/header :: header}">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Left side column. contains the sidebar -->
+    <div th:replace="~{admin/layout/sidebar :: sidebar}">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Main content -->
+        <section class="content">
+
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Applies Discount Campaign</h3>
+                </div>
+
+
+                <form role="form" th:action="@{/admin/applies-discount-campaign}" th:object="${productDiscountCampaign}"
+                      method="post">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="exampleInputEmail">Product</label>
+                            <select id="product" name="product">
+                                <option value="">--Chọn product--</option>
+                                <option th:each="product : ${products}" th:value="${product.id}"
+                                        th:text="${product.name}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Discount Campaign</label>
+                            <select id="discountCampaign" name="discountCampaign">
+                                <option th:value="${discountCampaign.id}" th:text="${discountCampaign.description}">
+                                    --Discount campaign--
+                                </option>
+                                <!--                                <option th:each="discountCampaign : ${discountCampaigns}" th:value="${discountCampaign.id}"-->
+                                <!--                                        th:text="${discountCampaign.description}"></option>-->
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <div th:replace="~{admin/layout/footer :: footer}">
+
+
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- jQuery 3 -->
+
+    <div th:replace="~{admin/layout/script :: script}">
+
+    </div>
+</div>
+</body>
+</html>

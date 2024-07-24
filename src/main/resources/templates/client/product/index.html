@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<!-- Added by HTTrack -->
+<meta http-equiv="content-type" content="text/html;charset=UTF-8"/><!-- /Added by HTTrack -->
+<head th:replace="client/layout/head :: head">
+
+</head>
+
+<body>
+<div class="page-wrapper">
+    <header th:replace="~{client/layout/header :: header}"></header>
+    <main class="main">
+        <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+            <div class="container d-flex align-items-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/home">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" style="color: #fcb941">Product detail</li>
+                </ol>
+            </div><!-- End .container -->
+        </nav><!-- End .breadcrumb-nav -->
+
+        <div class="page-content">
+            <div class="container">
+                <div class="product-details-top">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="product-gallery">
+                                <figure class="product-main-image">
+                                    <span class="product-label label-top"
+                                          th:each="sale:${product.pdc}"
+                                          th:text="${'- '+sale.discountCampaign.discountPercentage}+'%'"></span>
+                                    <img id="product-zoom"
+                                         th:src="${product.images[0].url}"
+                                         th:data-zoom-image="${product.images[0].url}" alt="product image" style="height: 500px">
+
+                                    <a href="#" id="btn-product-gallery" class="btn-product-gallery">
+                                        <i class="icon-arrows"></i>
+                                    </a>
+                                </figure><!-- End .product-main-image -->
+
+                                <div id="product-zoom-gallery" class="product-image-gallery">
+                                    <a th:each="image, iterStat : ${product.images}" class="product-gallery-item" href="#"
+                                       th:classappend="${iterStat.index == 0} ? ' active'"
+                                       th:data-image="${image.url}" th:data-zoom-image="${image.url}" onclick="changeMainImage(this)">
+                                        <img th:src="${image.url}" alt="product side" style="height: 92px">
+                                    </a>
+
+                                </div><!-- End .product-image-gallery -->
+                            </div>
+                        </div><!-- End .col-md-6 -->
+                        <input type="hidden" class="form-control" id="exampleInputEmail1" name="idProduct"
+                               th:value="${product.id}">
+
+                        <div class="col-md-8">
+                            <div class="product-details sticky-content" style="">
+                                <h1 class="product-title" th:text="${product.name}">Brown faux fur longline
+                                    coat</h1><!-- End .product-title -->
+
+                                <div class="ratings-container">
+                                    <div class="ratings">
+                                        <div class="ratings-val"
+                                             th:style="${'width:'+ product.getVote(product.reviews)+'%;'}"></div>
+                                        <!-- End .ratings-val -->
+                                    </div><!-- End .ratings -->
+                                    <a class="ratings-text" href="#product-accordion" id="review-link"
+                                       th:text="'( '+${product.reviews.size()}+' Reviews )'">( 2 Reviews )</a>
+                                </div><!-- End .rating-container -->
+
+                                <div class="product-price">
+
+                                    <span class="new-price" th:text="${'$'+#numbers.formatDecimal(product.price,0,0) }"></span>
+                                    &ensp;
+                                    <span class="old-price" th:if="${product.pdc.size()!=0}" th:text="${'$'+#numbers.formatDecimal(product.getOldPrice(product.pdc),0,0)}" style="text-decoration: line-through"></span>
+                                </div><!-- End .product-price -->
+
+                                <div class="product-content">
+                                    <p th:text="${product.description}"></p>
+                                </div><!-- End .product-content -->
+
+
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addToCartModal">
+                                    Choose color & size
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="addToCartModal" tabindex="-1" role="dialog" aria-labelledby="addToCartModalLabel" aria-hidden="true" th:data-product-id="${product.id}" >
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="addToCartModalLabel">Add to Cart</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body" style="background-color: #e7e8ea; color: black">
+                                                <form method="post" th:action="@{/home/add-to-cart/{id}(id=${product.id})}" class="product-form" style="margin-left: 30px; margin-top: 20px">
+                                                    <div class="details-filter-row details-row-size">
+                                                        <label for="size">Size:</label>
+                                                        <div class="option-group" id="size-options">
+                                                            <div class="option" th:each="size : ${sizes}" th:data-value="${size.id}" th:text="${size.name}" onclick="selectSize(this)">
+                                                            </div>
+                                                        </div>
+                                                        <input type="hidden" name="size" id="selected-size" class="hidden-input" required>
+                                                    </div>
+
+                                                    <div class="details-filter-row details-row-size">
+                                                        <label for="color">Màu sắc:</label>
+                                                        <div class="product-nav product-nav-dots" id="color-options">
+                                                            <a href="#" th:each="color : ${colors}" th:style="'background:' + ${color.description}" th:data-value="${color.id}" onclick="selectColor(this)">
+                                                                <span class="sr-only" th:text="${color.name}">Color name</span>
+                                                            </a>
+                                                        </div>
+                                                        <input type="hidden" name="color" id="selected-color" class="hidden-input" required>
+                                                    </div>
+
+                                                    <!-- Phần hiển thị số lượng sản phẩm còn lại -->
+                                                    <div id="stock-info" style="margin-top: 10px; color: #fcb941;"></div>
+
+                                                    <div class="details-filter-row details-row-size">
+                                                        <label for="qty">Số lượng:</label>
+                                                        <div class="product-details-quantity">
+                                                            <input type="number" id="qty" name="qty" class="form-control" value="1" min="1" max="10" step="1" data-decimals="0" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="product-details-action">
+                                                        <button type="submit" class="btn-product btn-cart" id="btnCart">Add to cart</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="product-details-footer">
+                                    <div class="product-cat">
+                                        <span>Category:</span>
+                                        <a href="#" th:text="${product.category.name}"></a>
+                                    </div><!-- End .product-cat -->
+
+                                    <div class="social-icons social-icons-sm">
+                                        <span class="social-label">Share:</span>
+                                        <a href="#" class="social-icon" title="Facebook" target="_blank"><i
+                                                class="icon-facebook-f"></i></a>
+                                        <a href="#" class="social-icon" title="Twitter" target="_blank"><i
+                                                class="icon-twitter"></i></a>
+                                        <a href="#" class="social-icon" title="Instagram" target="_blank"><i
+                                                class="icon-instagram"></i></a>
+                                        <a href="#" class="social-icon" title="Pinterest" target="_blank"><i
+                                                class="icon-pinterest"></i></a>
+                                    </div>
+                                </div><!-- End .product-details-footer -->
+
+                                <div class="accordion accordion-plus product-details-accordion" id="product-accordion">
+                                    <div class="card card-box card-sm">
+                                        <div class="card-header" id="product-desc-heading">
+                                            <h2 class="card-title">
+                                                <a class="collapsed" role="button" data-toggle="collapse"
+                                                   href="#product-accordion-desc" aria-expanded="false"
+                                                   aria-controls="product-accordion-desc">
+                                                    Description
+                                                </a>
+                                            </h2>
+                                        </div><!-- End .card-header -->
+                                        <div id="product-accordion-desc" class="collapse"
+                                             aria-labelledby="product-desc-heading" data-parent="#product-accordion"
+                                             style="">
+                                            <div class="card-body">
+                                                <div class="product-desc-content">
+                                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec
+                                                        odio. Quisque volutpat mattis eros. Nullam malesuada erat ut
+                                                        turpis. Suspendisse urna viverra non, semper suscipit, posuere
+                                                        a, pede. Donec nec justo eget felis facilisis fermentum. Aliquam
+                                                        porttitor mauris sit amet orci.</p>
+                                                    <ul>
+                                                        <li>Nunc nec porttitor turpis. In eu risus enim. In vitae mollis
+                                                            elit.
+                                                        </li>
+                                                        <li>Vivamus finibus vel mauris ut vehicula.</li>
+                                                        <li>Nullam a magna porttitor, dictum risus nec, faucibus
+                                                            sapien.
+                                                        </li>
+                                                    </ul>
+
+                                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec
+                                                        odio. Quisque volutpat mattis eros. Nullam malesuada erat ut
+                                                        turpis. Suspendisse urna viverra non, semper suscipit, posuere
+                                                        a, pede.</p>
+                                                </div><!-- End .product-desc-content -->
+                                            </div><!-- End .card-body -->
+                                        </div><!-- End .collapse -->
+                                    </div><!-- End .card -->
+
+                                    <div class="card card-box card-sm">
+                                        <div class="card-header" id="product-review-heading">
+                                            <h2 class="card-title">
+                                                <a class="collapsed" role="button" data-toggle="collapse"
+                                                   href="#product-accordion-review" aria-expanded="false"
+                                                   aria-controls="product-accordion-review"
+                                                   th:text="'( '+${product.reviews.size()}+' Reviews )'">
+                                                    Reviews (2)
+                                                </a>
+                                            </h2>
+                                        </div><!-- End .card-header -->
+                                        <div id="product-accordion-review" class="collapse"
+                                             aria-labelledby="product-review-heading" data-parent="#product-accordion"
+                                             style="">
+                                            <div class="card-body">
+                                                <div class="reviews" th:each="review: ${product.reviews}">
+                                                    <div class="review">
+                                                        <div class="row no-gutters">
+                                                            <div class="col-4">
+                                                                <h4><a href="#" th:text="${review.user.firstName +' ' + review.user.lastName}"></a></h4>
+                                                                <div class="ratings-container">
+                                                                    <div class="ratings">
+                                                                        <div class="ratings-val"
+                                                                             th:style="${'width:'+ review.vote+'%;'}"></div>
+                                                                        <!-- End .ratings-val -->
+                                                                    </div><!-- End .ratings -->
+                                                                </div><!-- End .rating-container -->
+                                                                <span class="review-date" th:text="${#dates.format(review.createdAt,'yyyy-MM-dd HH:mm')}">6 days ago</span>
+                                                            </div><!-- End .col -->
+                                                            <div class="col-8">
+                                                                <h4 th:text="${review.review}">Good, perfect size</h4>
+
+                                                                <div class="review-content">
+                                                                    <p>Lorem ipsum dolor sit amet, consectetur
+                                                                        adipisicing elit. Ducimus cum dolores assumenda
+                                                                        asperiores facilis porro reprehenderit animi
+                                                                        culpa atque blanditiis commodi perspiciatis
+                                                                        doloremque, possimus, explicabo, autem fugit
+                                                                        beatae quae voluptas!</p>
+                                                                </div><!-- End .review-content -->
+
+
+                                                            </div><!-- End .col-auto -->
+                                                        </div><!-- End .row -->
+
+                                                    </div><!-- End .review -->
+
+                                                </div><!-- End .reviews -->
+                                                <form th:action="@{/home/product/add-review/{id}(id=${product.id})}" method="post">
+                                                    <div class="rating">
+
+                                                        <input type="radio" name="rating" id="star1" value="20"><label for="star1" title="Bad">1<i class="icon-star"></i></label>&emsp;
+                                                        <input type="radio" name="rating" id="star2" value="40"><label for="star2" title="Poor">2<i class="icon-star"></i></label> &emsp;
+                                                        <input type="radio" name="rating" id="star3" value="60"><label for="star3" title="OK">3<i class="icon-star"></i> </label> &emsp;
+                                                        <input type="radio" name="rating" id="star4" value="80"><label for="star4" title="Good">4<i class="icon-star"></i></label> &emsp;
+                                                        <input type="radio" name="rating" id="star5" value="100"><label for="star5" title="Excellent">5<i class="icon-star"></i></label>
+
+                                                    </div>
+                                                    <textarea placeholder="Your review ..." style="width: 100%" name="cmt"></textarea>
+                                                    <button type="submit" class="btn btn-outline-info">Send</button>
+                                                </form>
+                                            </div><!-- End .card-body -->
+                                        </div><!-- End .collapse -->
+                                    </div><!-- End .card -->
+                                </div><!-- End .accordion -->
+                            </div><!-- End .product-details -->
+                        </div><!-- End .col-md-6 -->
+
+
+                    </div><!-- End .row -->
+                </div><!-- End .product-details-top -->
+
+                <hr class="mt-3 mb-5">
+
+                <h2 class="title text-center mb-4">You May Also Like</h2><!-- End .title text-center -->
+                <div class="owl-carousel owl-simple carousel-equal-height carousel-with-shadow owl-loaded owl-drag"
+                     data-toggle="owl" data-owl-options="{
+                            &quot;nav&quot;: false, 
+                            &quot;dots&quot;: true,
+                            &quot;margin&quot;: 20,
+                            &quot;loop&quot;: false,
+                            &quot;responsive&quot;: {
+                                &quot;0&quot;: {
+                                    &quot;items&quot;:1
+                                },
+                                &quot;480&quot;: {
+                                    &quot;items&quot;:2
+                                },
+                                &quot;768&quot;: {
+                                    &quot;items&quot;:3
+                                },
+                                &quot;992&quot;: {
+                                    &quot;items&quot;:4
+                                },
+                                &quot;1200&quot;: {
+                                    &quot;items&quot;:4,
+                                    &quot;nav&quot;: true,
+                                    &quot;dots&quot;: false
+                                }
+                            }
+                        }">
+
+                    <!-- End .product -->
+                    <div class="owl-stage-outer">
+                        <div class="owl-stage"
+                             style="transform: translate3d(0px, 0px, 0px); transition: all 0s ease 0s; width: 1233px;">
+                            <div class="owl-item active" style="width: 226.6px; margin-right: 20px;"
+                                 th:each="product1 : ${products}">
+                                <div class="product product-7">
+                                    <figure class="product-media">
+                                        <span class="product-label label-sale"
+                                              th:each="sale:${product1.pdc}"
+                                              th:text="${'- '+#numbers.formatDecimal(sale.discountCampaign.discountPercentage,0,0)}+'%'">
+                                        </span>
+
+                                        <a th:href="${product1.id}">
+                                            <img th:src="${product1.images[0].url}" alt="Product image"
+                                                 class="product-image" style="height: 300px">
+                                        </a>
+
+                                        <div class="product-action">
+                                            <a th:href="@{/home/product_view/{id}(id=${product1.id})}"
+                                               class="btn-product btn-cart"><span>quick view</span></a>
+                                        </div><!-- End .product-action -->
+                                    </figure><!-- End .product-media -->
+
+                                    <div class="product-body">
+                                        <div class="product-cat">
+                                            <a href="#" th:text="${product1.category.name}"></a>
+                                        </div><!-- End .product-cat -->
+                                        <h3 class="product-title"><a th:href="${product1.id}"
+                                                                     th:text="${product1.name}"></a></h3><!-- End .product-title -->
+                                        <div class="product-price">
+                                            <span class="new-price"
+                                                  th:text="${'$'+#numbers.formatDecimal(product1.price,0,0)}"></span>
+                                            &ensp;
+                                            <span class="old-price" th:if="${product1.pdc.size()!=0}" th:text="${'$'+#numbers.formatDecimal(product1.getOldPrice(product1.pdc),0,0)}" style="text-decoration: line-through"></span>
+                                        </div><!-- End .product-price -->
+                                        <div class="ratings-container">
+                                            <div class="ratings">
+                                                <div class="ratings-val"
+                                                     th:style="${'width:'+ product1.getVote(product1.reviews)+'%;'}"></div>
+                                                <!-- End .ratings-val -->
+                                            </div><!-- End .ratings -->
+                                            <span class="ratings-text"
+                                                  th:text="'( '+${product1.reviews.size()}+' Reviews )'">( 2 Reviews )</span>
+                                        </div><!-- End .rating-container -->
+
+                                    </div><!-- End .product-body -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="owl-nav disabled">
+                        <button type="button" role="presentation" class="owl-prev disabled"><i
+                                class="icon-angle-left"></i></button>
+                        <button type="button" role="presentation" class="owl-next"><i class="icon-angle-right"></i>
+                        </button>
+                    </div>
+                </div><!-- End .owl-carosel -->
+                <hr>
+            </div><!-- End .container -->
+
+        </div>
+        <!-- End .page-content -->
+    </main>
+    <footer th:replace="~{client/layout/footer :: footer}"></footer>
+</div><!-- End .page-wrapper -->
+<button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+
+<!-- Plugins JS File -->
+<script th:src="@{/client/js/jquery.min.js}"></script>
+<script th:src="@{/client/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/client/js/jquery.hoverIntent.min.js}"></script>
+<script th:src="@{/client/js/jquery.waypoints.min.js}"></script>
+<script th:src="@{/client/js/superfish.min.js}"></script>
+<script th:src="@{/client/js/owl.carousel.min.js}"></script>
+<script th:src="@{/client/js/bootstrap-input-spinner.js}"></script>
+<script th:src="@{/client/js/jquery.elevateZoom.min.js}"></script>
+<script th:src="@{/client/js/bootstrap-input-spinner.js}"></script>
+<script th:src="@{/client/js/jquery.magnific-popup.min.js}"></script>
+<!-- Main JS File -->
+<script th:src="@{/client/js/main.js}"></script>
+
+<script th:src="@{/client/js/jquery.plugin.min.js}"></script>
+<script th:src="@{/client/js/jquery.countdown.min.js}"></script>
+<script th:src="@{/client/js/jquery.sticky-kit.min.js}"></script>
+
+<script>
+    function getProductId() {
+        const modal = document.getElementById('addToCartModal');
+        return modal.getAttribute('data-product-id');
+    }
+
+    function updateStockInfo() {
+        const selectedSize = document.getElementById('selected-size').value;
+        const selectedColor = document.getElementById('selected-color').value;
+        const stockInfo = document.getElementById('stock-info');
+        const productId = getProductId();
+
+        if (selectedSize && selectedColor) {
+            // Gửi yêu cầu AJAX đến máy chủ để lấy số lượng sản phẩm còn lại
+            fetch(`/api/stock?size=${selectedSize}&color=${selectedColor}&productId=${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    stockInfo.textContent = `Số lượng còn lại: ${data.stock}`;
+                    if(data.stock==0){
+                        document.getElementById('qty').max = 1;
+                        stockInfo.textContent = `Hết hàng`;
+                        document.getElementById('btnCart').disabled = true;
+                        document.getElementById('btnCart').classList.add('disabled-button');
+                    }else if(data.stock<10){
+                        document.getElementById('qty').max = data.stock;
+                        document.getElementById('btnCart').disabled = false;
+                        document.getElementById('btnCart').classList.remove('disabled-button');
+                    }else{
+                        document.getElementById('qty').max = 10;
+                        document.getElementById('btnCart').disabled = false;
+                        document.getElementById('btnCart').classList.remove('disabled-button');
+                    }
+                     // Cập nhật giá trị max của input số lượng
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } else {
+            stockInfo.textContent = '';
+        }
+    }
+
+    function selectColor(element) {
+        // Xóa class 'active' khỏi tất cả các điểm
+        document.querySelectorAll('.product-nav.product-nav-dots a').forEach(function(dot) {
+            dot.classList.remove('active');
+        });
+        // Thêm class 'active' vào điểm được nhấn
+        element.classList.add('active');
+
+        // Cập nhật giá trị của input ẩn
+        const selectedColor = element.getAttribute('data-value');
+        document.getElementById('selected-color').value = selectedColor;
+
+        // Cập nhật thông tin số lượng sản phẩm còn lại
+        updateStockInfo();
+    }
+
+    function selectSize(element) {
+        // Xóa class 'selected' khỏi tất cả các tùy chọn size
+        document.querySelectorAll('.option-group#size-options .option').forEach(function(option) {
+            option.classList.remove('selected');
+        });
+        // Thêm class 'selected' vào tùy chọn được nhấn
+        element.classList.add('selected');
+
+        // Cập nhật giá trị của input ẩn
+        const selectedSize = element.getAttribute('data-value');
+        document.getElementById('selected-size').value = selectedSize;
+
+        // Cập nhật thông tin số lượng sản phẩm còn lại
+        updateStockInfo();
+    }
+
+    document.querySelectorAll('.product-nav.product-nav-dots a').forEach(function(dot) {
+        dot.addEventListener('click', function(event) {
+            event.preventDefault();
+            selectColor(this);
+        });
+    });
+
+    document.querySelectorAll('.option-group#size-options .option').forEach(function(option) {
+        option.addEventListener('click', function() {
+            selectSize(this);
+        });
+    });
+
+    // Reset form when modal is closed
+    $('#addToCartModal').on('hidden.bs.modal', function (e) {
+        document.querySelector('.product-form').reset();
+        document.getElementById('stock-info').textContent = '';
+        document.querySelectorAll('.option-group .option').forEach(option => option.classList.remove('selected'));
+        document.querySelectorAll('.product-nav.product-nav-dots a').forEach(dot => dot.classList.remove('active'));
+    });
+    function changeMainImage(element) {
+        // Lấy URL của ảnh từ thuộc tính data của thẻ a
+        const newImageSrc = element.getAttribute('data-image');
+        const newZoomImageSrc = element.getAttribute('data-zoom-image');
+
+        // Cập nhật ảnh lớn
+        const mainImage = document.getElementById('product-zoom');
+        mainImage.setAttribute('src', newImageSrc);
+        mainImage.setAttribute('data-zoom-image', newZoomImageSrc);
+
+        // Xóa class 'active' khỏi tất cả các mục ảnh
+        document.querySelectorAll('.product-gallery-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        // Thêm class 'active' vào ảnh được nhấn
+        element.classList.add('active');
+    }
+
+</script>
+<script th:src="@{https://code.jquery.com/jquery-3.3.1.slim.min.js}"></script>
+<script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js}"></script>
+<script th:src="@{https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+</body>
+</html>

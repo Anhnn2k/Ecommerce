@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Status</title>
+</head>
+<body>
+<h1>Upload Status</h1>
+
+<p th:if="${message}" th:text="${message}"></p>
+
+<div th:if="${imageUrl}">
+    <h2>Uploaded Image:</h2>
+    <img th:src="${imageUrl}" alt="Uploaded Image" style="max-width: 100%; height: auto;">
+</div>
+
+<a href="/admin/add-product">Go Back</a>
+</body>
+</html>

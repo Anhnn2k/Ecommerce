@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/layout/head :: head"></head>
+<body class="hold-transition skin-blue sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <div th:replace="admin/layout/header :: header">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Left side column. contains the sidebar -->
+    <div th:replace="admin/layout/sidebar :: sidebar">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+
+        <!-- Main content -->
+        <section class="content">
+
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Product List</h3>
+                </div>
+                <div class="box-header">
+                    <a class="btn btn-success" th:href="@{/admin/add-product-detail/{id}(id=${id},pageNo=${pageNo},size=${size})}"> Add new detail
+                        product</a>
+                </div>
+                <div class="box-body">
+                    <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-6"></div>
+                            <div class="col-sm-6"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="example2" class="table table-bordered table-hover dataTable" role="grid"
+                                       aria-describedby="example2_info">
+                                    <thead>
+                                    <tr role="row">
+                                        <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-sort="ascending"
+                                            aria-label="Rendering engine: activate to sort column descending">STT
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Browser: activate to sort column ascending">Tên sản
+                                            phẩm
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Browser: activate to sort column ascending">Thông
+                                            tin
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Browser: activate to sort column ascending">Giá bán
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Platform(s): activate to sort column ascending">
+                                            Màu sắc
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Platform(s): activate to sort column ascending">
+                                            Size
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Platform(s): activate to sort column ascending">
+                                            Số lượng
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Platform(s): activate to sort column ascending"
+                                            style="width: 200px">
+                                            Ảnh
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Platform(s): activate to sort column ascending">
+                                            Tình trạng
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Engine version: activate to sort column ascending">
+                                            Action
+                                        </th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="product,stt : ${productDetails.content}">
+                                        <td th:text="${stt.index+1}"></td>
+                                        <td th:text="${product.product.name}"></td>
+                                        <td th:text="${product.product.description}"></td>
+                                        <td th:text="${product.product.price}"></td>
+                                        <td th:text="${product.color.name}"></td>
+                                        <td th:text="${product.size.name}"></td>
+                                        <td th:text="${product.quantity}"></td>
+                                        <td th:if="${product.product.images}">
+                                                <img th:src="${product.product.images[0].url}" alt="Uploaded Image"
+                                                     style="width: 50px; height: 70px;margin-left: 10px;margin-top: 10px">
+                                        </td>
+                                        <td th:unless="${product.product.images}">
+                                            No Image
+                                        </td>
+                                        <td th:if="${product.status}">
+                                            <span class="label label-success">active</span>
+                                        </td>
+                                        <td th:if="${!product.status}">
+                                            <span class="label label-danger">non-active</span>
+                                        </td>
+                                        <td>
+
+                                            <a th:href="@{/admin/delete-product-detail/{id}(id=${product.id},pageNo=${pageNo},size=${size})}"
+                                               class="btn btn-danger">Delete</a>
+
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <span th:text="'Page ' + ${productDetails.number + 1} + ' of ' + ${productDetails.totalPages}"></span>
+                            </div>
+                            <ul class="pagination">
+                                <li>
+                                    <a th:if="${productDetails.hasPrevious()}"
+                                       th:href="@{/admin/create-detail-product/{id}(id=${id},pageNo=${productDetails.number - 1}, size=${productDetails.size})}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li th:each="i : ${#numbers.sequence(1, productDetails.totalPages)}">
+                                    <a th:href="@{/admin/create-detail-product/{id}(id=${id},pageNo=${i-1},size=${productDetails.size})}"
+                                       th:text="${i}">1</a>
+                                </li>
+                                <li>
+                                    <a th:if="${productDetails.hasNext()}"
+                                       th:href="@{/admin/create-detail-product/{id}(id=${id},pageNo=${productDetails.number + 1}, size=${productDetails.size})}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <a th:href="@{/admin/product}"
+                                   class="btn btn-primary">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <div th:replace="admin/layout/footer :: footer">
+
+
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- jQuery 3 -->
+
+    <div th:replace="admin/layout/script :: script">
+
+    </div>
+</div>
+<!--<script>-->
+<!--    $(document).ready(function() {-->
+<!--        $('#example2').DataTable();-->
+<!--    });-->
+<!--</script>-->
+</body>
+</html>

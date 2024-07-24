@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout/head :: head}">
+    <style>
+        .table tbody tr {
+            cursor: grab;
+        }
+    </style>
+
+</head>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+<body class="hold-transition skin-blue sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <div th:replace="~{admin/layout/header :: header}">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Left side column. contains the sidebar -->
+    <div th:replace="admin/layout/sidebar :: sidebar">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+
+        <!-- Main content -->
+        <section class="content">
+
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Slide list</h3>
+                </div>
+                <div class="box-header">
+                    <a class="btn btn-success" href="/admin/add-slide"> Add new slide</a>
+                </div>
+                <div class="box-body">
+                    <div id="example2_wrapper" class="dataTables_wrapper form-inline dt-bootstrap">
+                        <div class="row">
+                            <div class="col-sm-6"></div>
+                            <div class="col-sm-6"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table id="example2" class="table table-bordered table-hover dataTable" role="grid"
+                                       aria-describedby="example2_info">
+                                    <thead>
+                                    <tr role="row">
+                                        <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-sort="ascending"
+                                            aria-label="Rendering engine: activate to sort column descending">STT
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Browser: activate to sort column ascending">Content
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Platform(s): activate to sort column ascending"
+                                            style="width: 200px">
+                                            Image
+                                        </th>
+                                        <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1"
+                                            colspan="1" aria-label="Engine version: activate to sort column ascending">
+                                            Action
+                                        </th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="slide,stt : ${slides}" th:data-id="${slide.id}">
+                                        <td th:text="${stt.index + 1}"></td>
+                                        <td th:text="${slide.content}"></td>
+                                        <td th:if="${slide.url}">
+                                            <img th:src="${slide.url}" alt="Uploaded Image"
+                                                 style="max-width: 100%; height: auto;">
+                                        </td>
+                                        <td th:unless="${slide.url}">
+                                            No Image
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/admin/update-slide/{id}(id=${slide.id})}"
+                                               class="btn btn-success">Update</a>
+                                            <a th:href="@{/admin/delete-slide/{id}(id=${slide.id})}"
+                                               class="btn btn-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <button id="saveOrder" class="btn btn-success">Lưu thứ tự</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <div th:replace="~{admin/layout/footer :: footer}">
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- jQuery 3 -->
+
+    <div th:replace="~{admin/layout/script :: script}">
+
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const slideTable = document.getElementById('example2').querySelector('tbody');
+        const saveOrderButton = document.getElementById('saveOrder');
+
+        // Make the table sortable
+        new Sortable(slideTable, {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            handle: 'tr'
+        });
+
+        saveOrderButton.addEventListener('click', function () {
+            const slideItems = slideTable.querySelectorAll('tr');
+            const order = Array.from(slideItems).map(item => item.dataset.id);
+
+            fetch('/admin/update-slide-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({order: order})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Thứ tự slide đã được cập nhật');
+                    } else {
+                        alert('Cập nhật thất bại');
+                    }
+                });
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log("DOM fully loaded and parsed");
+        // ... phần còn lại của mã JavaScript
+    });
+</script>
+</body>
+</html>

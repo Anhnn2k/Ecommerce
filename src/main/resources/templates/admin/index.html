@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/layout/head :: head"></head>
+<body class="hold-transition skin-blue sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <div th:replace="admin/layout/header :: header">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Left side column. contains the sidebar -->
+    <div th:replace="admin/layout/sidebar :: sidebar">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+
+        <!-- Main content -->
+        <section class="content">
+
+            <!-- Default box -->
+            <div class="box">
+
+                <div class="box-body">
+                    Chào mừng đến với trang quản trị BU3 Ecommerce
+                </div>
+
+            </div>
+            <!-- /.box -->
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <div th:replace="admin/layout/footer :: footer">
+
+
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- jQuery 3 -->
+
+    <div th:replace="admin/layout/script :: script">
+
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+<head th:replace="~{client/layout/head :: head}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            margin-top: 20px;
+            background-color: #f2f6fc;
+            color: #69707a;
+        }
+
+        .img-account-profile {
+            height: 10rem;
+        }
+
+        .rounded-circle {
+            border-radius: 50% !important;
+        }
+
+        .card {
+            box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+        }
+
+        .card .card-header {
+            font-weight: 500;
+        }
+
+        .card-header:first-child {
+            border-radius: 0.35rem 0.35rem 0 0;
+        }
+
+        .card-header {
+            padding: 1rem 1.35rem;
+            margin-bottom: 0;
+            background-color: rgba(33, 40, 50, 0.03);
+            border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+        }
+
+        .form-control, .dataTable-input {
+            display: block;
+            width: 100%;
+            padding: 0.875rem 1.125rem;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1;
+            color: #69707a;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #c5ccd6;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 0.35rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .nav-borders .nav-link.active {
+            color: #0061f2;
+            border-bottom-color: #0061f2;
+        }
+
+        .nav-borders .nav-link {
+            color: #69707a;
+            border-bottom-width: 0.125rem;
+            border-bottom-style: solid;
+            border-bottom-color: transparent;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            padding-left: 0;
+            padding-right: 0;
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+
+    </style>
+</head>
+<body>
+<div class="page-wrapper">
+    <header th:replace="~{client/layout/header :: header}"></header>
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container d-flex align-items-center">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/home">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page" style="color: #fcb941">Profile</li>
+            </ol>
+
+
+        </div><!-- End .container -->
+    </nav>
+    <div class="container-xl px-4 mt-4">
+
+        <div class="row">
+            <div class="col-xl-4">
+                <!-- Profile picture card-->
+                <div class="card mb-4 mb-xl-0">
+                    <div class="card-header">Profile Picture</div>
+                    <div class="card-body text-center">
+                        <!-- Profile picture image-->
+                        <div class="text-center">
+                            <img class="img-account-profile rounded-circle mb-2" id="profileImage" th:src="${imageUrl}" alt="" style="width: 150px; height: 150px;margin: 0 auto;">
+                            <button class="btn btn-primary mt-2" onclick="document.getElementById('imageInput').click();" style="margin-top: 0px">Đổi ảnh</button>
+                            <input type="file" id="imageInput" style="display: none;" onchange="previewImage(event)">
+                        </div>
+                        <div class="text-center mt-3">
+                            <button class="btn btn-success" onclick="uploadImage()">Lưu ảnh</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <div id="message" class="alert alert-success" style="display:none;"></div>
+                        </div> <hr>
+                        <!-- Profile picture upload button-->
+                        <button class="btn btn-primary" type="button">
+                            <a th:href="@{/home/update-password}" style="color: white">Changes Password</a>
+                        </button>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="col-xl-8">
+                <!-- Account details card-->
+                <div class="card mb-4">
+                    <div class="card-header">Account Details</div>
+                    <div class="card-body">
+                        <form th:action="@{/home/client/update-profile}" th:object="${user}" method="post">
+                            <input type="hidden" class="form-control" id="exampleInputEmail1" placeholder="Enter name"
+                                   th:field="*{id}">
+                            <input type="hidden" class="form-control" id="role" placeholder="Enter role"
+                                   th:field="*{role.id}">
+                            <input type="hidden" class="form-control" id="status" placeholder="Enter status"
+                                   th:field="*{status}">
+                            <input type="hidden" class="form-control" id="password" placeholder="Enter password"
+                                   th:field="*{password}">
+                            <input type="hidden" class="form-control" id="imageUrl" placeholder="Enter imageUrl"
+                                   th:field="*{imageUrl}">
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (first name)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputFirstName">First name</label>
+                                    <input class="form-control" id="inputFirstName" type="text"
+                                           placeholder="Enter your first name" th:field="*{firstName}">
+                                </div>
+                                <!-- Form Group (last name)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputLastName">Last name</label>
+                                    <input class="form-control" id="inputLastName" type="text"
+                                           placeholder="Enter your last name" th:field="*{lastName}">
+                                </div>
+                            </div>
+                            <!-- Form Row        -->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (organization name)-->
+                                <div class="col-md-6">
+                                    <label class="card-header">Gender</label> <br>
+                                    <label>
+                                        <input type="radio" th:field="*{gender}" value="1">
+                                        Male
+                                    </label><br>
+                                    <label>
+                                        <input type="radio" th:field="*{gender}" value="0">
+                                        Female
+                                    </label><br>
+                                </div>
+                                <!-- Form Group (location)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputLocation">Location</label>
+                                    <input class="form-control" id="inputLocation" type="text"
+                                           placeholder="Enter your location" value="San Francisco, CA"
+                                           th:field="*{address}">
+                                </div>
+                            </div>
+                            <!-- Form Group (email address)-->
+                            <div class="mb-3">
+                                <label class="small mb-1" for="inputEmailAddress">Email address</label>
+                                <input class="form-control" id="inputEmailAddress" type="email"
+                                       placeholder="Enter your email address" value="name@example.com"
+                                       th:field="*{email}" readonly>
+                            </div>
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (phone number)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputPhone">Phone number</label>
+                                    <input class="form-control" id="inputPhone" type="tel"
+                                           placeholder="Enter your phone number" value="555-123-4567"
+                                           th:field="*{numberPhone}">
+                                </div>
+                                <!-- Form Group (birthday)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputBirthday">Birthday</label>
+                                    <input class="form-control" id="inputBirthday" type="date" name="birthday"
+                                           placeholder="Enter your birthday" th:field="*{birthday}">
+                                </div>
+                            </div>
+                            <!-- Save changes button-->
+                            <button class="btn btn-primary" type="submit">Save changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{client/layout/footer :: footer}"></footer>
+</div>
+<button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+<script>
+    function previewImage(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.getElementById('profileImage');
+            output.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function uploadImage() {
+        var fileInput = document.getElementById('imageInput');
+        var file = fileInput.files[0];
+
+        if (file) {
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/home/upload-profile-image', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('message').style.display = 'block';
+                        document.getElementById('message').textContent = 'Ảnh đã được tải lên thành công!';
+                        setTimeout(function () {
+                            document.getElementById('message').style.display = 'none';
+                        },3000);
+                    } else {
+                        alert('Lỗi tải lên ảnh.');
+                    }
+                }).catch(error => {
+                console.error('Error:', error);
+                alert('Lỗi tải lên ảnh.');
+            });
+        } else {
+            alert('Vui lòng chọn một ảnh.');
+        }
+    }
+</script>
+</body>
+</html>

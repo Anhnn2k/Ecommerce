@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+<head th:replace="~{client/layout/head :: head}">
+
+</head>
+<body>
+<div class="page-wrapper">
+    <header th:replace="~{client/layout/header :: header}"></header>
+    <nav aria-label="breadcrumb" class="breadcrumb-nav border-0 mb-0">
+        <div class="container d-flex align-items-center">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/home">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page" style="color: #fcb941" th:text="${pageName}"></li>
+            </ol>
+
+
+        </div><!-- End .container -->
+    </nav>
+    <br><br>
+    <div class="container">
+        <h2 class="title text-center mb-3" th:text="${title}"></h2><!-- End .title -->
+
+        <div class="row">
+            <div class="col-6 col-md-4 col-lg-4" th:each="product:${products}">
+                <div class="product text-center">
+                    <figure class="product-media">
+
+                                        <span class="product-label label-sale" th:each="pdc1:${product.pdc}"
+                                              th:if="${pdc1}"
+                                              th:text="'-'+${#numbers.formatDecimal(pdc1.discountCampaign.discountPercentage,0,0)+ '%'} ">
+                                        </span>
+
+                        <a th:href="@{/home/product_view/{id}(id=${product.id})}">
+                            <img th:src="${product.images[0].url}" alt="Product image" class="product-image"
+                                 style="height: 400px">
+                        </a>
+
+                        <div class="product-action">
+                            <a th:href="@{/home/product_view/{id}(id=${product.id})}" class="btn btn-warning"
+                               title="Quick view" style="width: 100%"><span>quick view</span></a>
+                        </div><!-- End .product-action -->
+                    </figure><!-- End .product-media -->
+
+                    <div class="product-body">
+                        <div class="product-cat">
+                            <a th:href="@{/home/product-category/{id}(id=${product.category.id})}" th:text="${product.category.name}"></a>
+                        </div><!-- End .product-cat -->
+                        <h3 class="product-title">
+                            <a th:href="@{/home/product_view/{id}(id=${product.id})}" th:text="${product.name}"></a>
+                        </h3><!-- End .product-title -->
+                        <div class="product-price">
+                            <span class="new-price" th:text="${'$'+#numbers.formatDecimal(product.price,0,0) }"></span>
+                            &ensp;
+                            <span class="old-price" th:if="${product.pdc.size()!=0}" th:text="${'$ '+#numbers.formatDecimal(product.getOldPrice(product.pdc),0,0)}" style="text-decoration: line-through"></span>
+                        </div><!-- End .product-price -->
+                        <div class="ratings-container">
+                            <div class="ratings">
+                                <div class="ratings-val" th:style="${'width:'+ product.getVote(product.reviews)+'%;'}">
+
+                                </div><!-- End .ratings-val -->
+                            </div><!-- End .ratings -->
+                            <!--                                        <span class="ratings-text" th:text="${}">( 4 Reviews )</span>-->
+                            <span class="ratings-text" th:text="'( '+${product.reviews.size()}+' Reviews )'">( 4 Reviews )</span>
+                        </div><!-- End .rating-container -->
+                    </div><!-- End .product-body -->
+                </div><!-- End .product -->
+            </div><!-- End .col-sm-6 col-lg-4 -->
+        </div><!-- End .row -->
+
+        <hr class="mt-1 mb-5">
+
+
+    </div>
+    <footer th:replace="~{client/layout/footer :: footer}"></footer>
+</div>
+<button id="scroll-top" title="Back to Top"><i class="icon-arrow-up"></i></button>
+</body>
+</html>

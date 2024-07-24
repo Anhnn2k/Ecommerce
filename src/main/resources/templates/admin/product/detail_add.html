@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/layout/head :: head">
+
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <div th:replace="admin/layout/header :: header">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Left side column. contains the sidebar -->
+    <div th:replace="admin/layout/sidebar :: sidebar">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Main content -->
+        <section class="content">
+
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Add New Product Detail</h3>
+                </div>
+
+
+                <form role="form" th:action="@{/admin/add-detail-product}" th:object="${productDetail}" method="post">
+                    <div class="box-body">
+                        <input type="hidden" name="pageNo" th:value="${pageNo}">
+                        <input type="hidden" name="sizes" th:value="${size}">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Sản phẩm</label>
+                            <select id="product" name="product">
+                                <option th:value="${products.id}" th:text="${products.name}">--Chọn Sản phẩm--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Color</label>
+                            <select id="color" name="color" multiple>
+                                <option value="">--Chọn màu sắc--</option>
+                                <option th:each="color : ${colors}" th:value="${color.id}"
+                                        th:text="${color.name}"></option>
+                            </select>
+                            <label th:errors="*{color}" style="color: #fcb941"></label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Size</label>
+                            <select id="size" name="size" multiple>
+                                <option value="">--Chọn Size--</option>
+                                <option th:each="size : ${sizes}" th:value="${size.id}"
+                                        th:text="${size.name}"></option>
+                            </select>
+                            <label th:errors="*{size}" style="color: #fcb941"></label>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Số lượng</label>
+                            <input type="number" class="form-control" id="exampleInputEmail1"
+                                   placeholder="Nhập số lượng"
+                                   th:field="*{quantity}">
+                            <label th:errors="*{quantity}" style="color: #fcb941"></label>
+                        </div>
+                    </div>
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+                <div>
+                    <p th:if="${message}" th:text="${message}"></p>
+                </div>
+            </div>
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <div th:replace="admin/layout/footer :: footer">
+
+
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- jQuery 3 -->
+
+    <div th:replace="admin/layout/script :: script">
+
+    </div>
+</div>
+</body>
+</html>

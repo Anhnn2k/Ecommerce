@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/layout/head :: head">
+
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <div th:replace="admin/layout/header :: header">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Left side column. contains the sidebar -->
+    <div th:replace="admin/layout/sidebar :: sidebar">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Main content -->
+        <section class="content">
+
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Update User</h3>
+                </div>
+
+
+                <form role="form" th:action="@{/admin/update-user}" th:object="${user1}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" class="form-control" id="exampleInputEmail1" placeholder="Enter name"
+                           th:field="*{id}">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Họ</label>
+                            <input type="text" class="form-control" id="firstName" placeholder="Enter first name"
+                                   th:field="*{firstName}">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tên</label>
+                            <input type="text" class="form-control" id="lastName" placeholder="Enter last name"
+                                   th:field="*{lastName}">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Email</label>
+                            <input type="text" class="form-control" id="email" placeholder="Enter email"
+                                   th:field="*{email}">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Địa chỉ</label>
+                            <input type="text" class="form-control" id="address"
+                                   placeholder="Enter Address"
+                                   th:field="*{address}">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Ngày sinh</label>
+                            <input type="date" class="form-control" id="birthday"
+                                   placeholder="Enter birthday"
+                                   th:field="*{birthday}">
+
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Giới tính</label> <br>
+                            <label>
+                                <input type="radio" th:field="*{gender}" value="1">
+                                Nam
+                            </label><br>
+                            <label>
+                                <input type="radio" th:field="*{gender}" value="0">
+                                Nữ
+                            </label><br>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">SĐT</label>
+                            <input type="text" class="form-control" id="exampleInputEmail1"
+                                   placeholder="Enter phone number"
+                                   th:field="*{numberPhone}">
+
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Chức vụ</label>
+                            <select id="role" name="role">
+                                <option th:text="${user1.role.roleName}" th:value="${user1.role.id}">--Role select--</option>
+                                <option th:each="role : ${roles}" th:value="${role.id}"
+                                        th:text="${role.roleName}"></option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Status</label> <br>
+                            <label>
+                                <input type="radio" th:field="*{status}" value="1">
+                                Active
+                            </label><br>
+                            <label>
+                                <input type="radio" th:field="*{status}" value="0">
+                                Non-active
+                            </label><br>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+                <div>
+                    <p th:if="${message}" th:text="${message}"></p>
+                </div>
+            </div>
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <div th:replace="admin/layout/footer :: footer">
+
+
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- jQuery 3 -->
+
+    <div th:replace="admin/layout/script :: script">
+
+    </div>
+</div>
+</body>
+</html>

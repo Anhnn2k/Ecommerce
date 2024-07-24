@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/layout/head :: head}"></head>
+<body class="hold-transition skin-blue sidebar-mini">
+<!-- Site wrapper -->
+<div class="wrapper">
+
+    <div th:replace="~{admin/layout/header :: header}">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Left side column. contains the sidebar -->
+    <div th:replace="~{admin/layout/sidebar :: sidebar}">
+
+    </div>
+
+    <!-- =============================================== -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Main content -->
+        <section class="content">
+
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Add New Slide</h3>
+                </div>
+
+
+                <form role="form" th:action="@{/admin/add-slide}" th:object="${slide}" method="post"
+                      enctype="multipart/form-data">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Content</label>
+                            <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter content"
+                                   th:field="*{content}">
+                            <label th:errors="*{content}" style="color: #fcb941"></label>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Images</label>
+                            <input type="file" class="form-control" id="file" name="file">
+                        </div>
+                        <input type="hidden" class="form-control" id="exampleInputEmail1" placeholder="Enter name"
+                               th:field="*{oder}">
+                    </div>
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+                <div>
+                    <p th:if="${message}" th:text="${message}"></p>
+                </div>
+            </div>
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    <div th:replace="~{admin/layout/footer :: footer}">
+
+
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- jQuery 3 -->
+
+    <div th:replace="~{admin/layout/script :: script}">
+
+    </div>
+</div>
+</body>
+</html>
